@@ -239,24 +239,23 @@ void TaskECGSendFunction(void *pvParameters) {
     while (1) {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
-        // Каждый раз выделяем новую память
         int32_t* sendBuffer = (int32_t*)malloc(ECG_BUFFER_SIZE * sizeof(int32_t));
         if (!sendBuffer) {
             Serial.println("Memory Allocation Failed!");
-            continue;  // не продолжаем без памяти
+            continue;  
         }
 
-        Serial.println("📤 Preparing ECG Data for Transmission...");
+        Serial.println("Preparing ECG Data for Transmission...");
 
         for (int i = 0; i < ECG_BUFFER_SIZE; i++) {
             if (xQueueReceive(ecgQueue, &sendBuffer[i], portMAX_DELAY) != pdTRUE) {
-                Serial.println("⚠️ ECG Queue Empty! Waiting...");
+                Serial.println("ECG Queue Empty! Waiting...");
                 break;
             }
         }
 
         if (xQueueSend(ECGQueue, &sendBuffer, 0) != pdTRUE) {
-            Serial.println("⚠️ WiFi Queue Full! Dropping ECG Data.");
+            Serial.println("WiFi Queue Full! Dropping ECG Data.");
             free(sendBuffer);
         } else {
             Serial.println("ECG Data Added to WiFi Queue");
@@ -266,7 +265,7 @@ void TaskECGSendFunction(void *pvParameters) {
 
 // Sensor Data Collection Task (Runs Every 60 Seconds)
 void TaskSensorsFunction(void *pvParameters) {
-    float temp = 36.5; // Default parameter
+    float temp = 0.0; // Default parameter
     int spo2 = 0;     // Default parameter
     int hr = 0;       // Default parameter
     float sysBP = 0; 
@@ -336,7 +335,7 @@ void TaskWiFiSendFunction(void *pvParameters) {
                 if (client.connect(serverIP, port)) {
                     client.print("ECGDATA\n");
                     client.flush();
-                    delay(100);  // give server a chance to process header
+                    delay(100); 
 
                     const int chunkSize = 1024;
                     int bytesToSend = ECG_BUFFER_SIZE * sizeof(int32_t);
@@ -354,7 +353,7 @@ void TaskWiFiSendFunction(void *pvParameters) {
                     dataPtr += sent;
                     bytesToSend -= sent;
 
-                    delay(10); // give some breathing room for the network
+                    delay(10);
                   }
 
                 // Check if all data was sent before printing success message
@@ -371,7 +370,7 @@ void TaskWiFiSendFunction(void *pvParameters) {
                 }
                 xSemaphoreGive(wifiMutex);
             }
-            free(ecgSendBuffer);  // Only now free the memory
+            free(ecgSendBuffer);  // free the memory
         }
 
         if (xQueueReceive(sensorQueue, &sensorData, 0) == pdTRUE) {
