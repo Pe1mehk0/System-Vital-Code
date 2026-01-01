@@ -6,8 +6,8 @@
 #include "Protocentral_MAX30205.h"
 
 // WiFi Configuration
-const char* ssid = "TransceiverNet";
-const char* password = "12345678";
+const char* ssid = "<LOCAL_NETWORK>";
+const char* password = "<DEMO_PASSWORD>";
 const char* serverIP = "192.168.4.1";
 const int port = 5000;
 WiFiClient client;
@@ -131,14 +131,14 @@ void setup() {
     tcaselect(2);
     delay(300);
     int result = bioHub.begin();
-    if (result == 0) // Zero errors!
+    if (result == 0) // Zero errors
       Serial.println("Sensor started!");
     else
       Serial.println("Could not communicate with the sensor!");
  
     Serial.println("Configuring Sensor...."); 
     int error = bioHub.configBpm(MODE_ONE); // Configuring just the BPM settings. 
-    if(error == 0){ // Zero errors!
+    if(error == 0){ // Zero errors
       Serial.println("Sensor configured.");
     }
     else {
@@ -149,16 +149,12 @@ void setup() {
 
   bioHub.setPulseWidth(411);
   delay(50); // Wider pulse for deep tissue
-  // Step 5: Set Sample Rate for Stability
   bioHub.setSampleRate(25);
   delay(50);  // Reduce noise, better for upper arm
-  // Step 6: Increase ADC Range for Weaker Signals
   bioHub.setAdcRange(16384); 
   delay(50);
-  // Step 7: Enable Automatic Gain Control
   bioHub.agcAlgoControl(ENABLE);
-  delay(50); 
-  // Step 8: Optimize Algorithm Sensitivity
+  delay(50);
   bioHub.setAlgoSensitivity(40); 
   delay(50); 
   bioHub.setAlgoSamples(32); 
@@ -230,7 +226,7 @@ void TaskECGFunction(void *pvParameters) {
             counter_ECG = 0;
             xTaskNotifyGive(TaskECGSend);
         }
-      delay(8); // My sampling rate is 8
+      delay(8); // My sampling rate is 125Hz
     }
 }
 
