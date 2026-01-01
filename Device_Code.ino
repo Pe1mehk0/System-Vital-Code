@@ -230,7 +230,7 @@ void TaskECGFunction(void *pvParameters) {
             counter_ECG = 0;
             xTaskNotifyGive(TaskECGSend);
         }
-      delay(8); // My sampling rate is 8 <-- cjange later
+      delay(8); // My sampling rate is 8
     }
 }
 
@@ -411,7 +411,7 @@ void getHeartRateAndSpO2(int* hrOut, int* spo2Out) {
       count2++;
     }
     count++;
-    delay(250);  // 10Hz
+    delay(250); 
   }
 
   if (count2 == 0) {
@@ -422,8 +422,8 @@ void getHeartRateAndSpO2(int* hrOut, int* spo2Out) {
   }
 
   // Mode calculation
-  int countsHR[141] = {0};    // for HR 40-180
-  int countsSpO2[11] = {0};   // for SpO2 90-100
+  int countsHR[141] = {0};    
+  int countsSpO2[11] = {0};  
 
   for (int i = 0; i < count; i++) {
     int hri = hrValues[i];
@@ -467,7 +467,7 @@ void measureBloodPressure(float* systolicOut, float* diastolicOut) {
   float systolic = 0.0;
   float diastolic = 0.0;
 
-  inflateCuff(3.5); // Inflate to 3.5 PSI (~180 mmHg)
+  inflateCuff(3.5); // Inflate to 3.5 PSI
 
   Serial.println("Measuring blood pressure...");
   
